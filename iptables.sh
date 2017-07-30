@@ -27,8 +27,14 @@ iptables -Z
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT ACCEPT
+# 允许回环 
 iptables -A INPUT -i lo -j ACCEPT
 iptables -A INPUT  -p tcp -j ACCEPT -m multiport --dport 80,443,3312,3313,13141,14126,41261,43458,55090
+
+
+# 允许由服务器本身请求的数据通过
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT  
+# iptables -A INPUT -m state --state ESTABLISHED,RELATED -m tcp -p tcp --dport 22 -j ACCEPT
 
 
 # 允许单个IP访问服务器的80端口的最大连接数为 20 
@@ -97,3 +103,5 @@ systemctl enable iptables.service
 
 service iptables save
 service iptables restart
+
+systemctl restart iptables.service

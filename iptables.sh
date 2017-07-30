@@ -8,6 +8,9 @@ PATH=/sbin:/usr/sbin:/bin:/usr/bin
 # Defense against all kinds of attacks
 # To provide security for escort
 ###########################################################
+
+
+# 优化系统
 echo net.ipv4.tcp_syncookies = 1 >/etc/sysctl.conf
 echo net.ipv4.tcp_fin_timeout = 1 >>/etc/sysctl.conf
 echo net.ipv4.tcp_tw_reuse = 1 >>/etc/sysctl.conf
@@ -21,14 +24,24 @@ echo net.ipv4.tcp_max_orphans = 262144 >>/etc/sysctl.conf
 echo net.ipv4.tcp_keepalive_time = 30 >>/etc/sysctl.conf
 sysctl -p
 
+
+# 清理所有规则
 iptables -F
 iptables -X
 iptables -Z
+
+
+# 设置默认策略
 iptables -P INPUT DROP
 iptables -P FORWARD DROP
 iptables -P OUTPUT ACCEPT
+
+
 # 允许回环 
 iptables -A INPUT -i lo -j ACCEPT
+
+
+# 允许通行端口
 iptables -A INPUT  -p tcp -j ACCEPT -m multiport --dport 80,443,3312,3313,13141,14126,41261,43458,55090
 
 
